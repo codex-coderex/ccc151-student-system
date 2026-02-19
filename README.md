@@ -116,6 +116,8 @@ wails build
 # output: build/bin/student-system.exe
 ```
 
+> **Note:** Move `student-system.exe` out of `build/bin/` and into the project root before running it, so it can locate the `data/` folder correctly.
+
 ---
 
 ## Package Documentation 📦
