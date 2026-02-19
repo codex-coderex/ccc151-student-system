@@ -1,0 +1,15 @@
+{
+  "name": "student-system",
+  "outputfilename": "student-system",
+  "author": {
+    "name": "",
+    "email": ""
+  },
+  "info": {
+    "companyName": "",
+    "productName": "student-system",
+    "productVersion": "1.0.0",
+    "copyright": "",
+    "comments": ""
+  }
+}

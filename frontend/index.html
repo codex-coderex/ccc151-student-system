@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSIS - Student Information System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- sidebar  -->
+  <div class="sidebar">
+    <h2>SSIS</h2>
+    <p class="subtitle">MSU-IIT</p>
+    <nav>
+      <div class="nav-item active" data-section="students">Students</div>
+      <div class="nav-item" data-section="programs">Programs</div>
+      <div class="nav-item" data-section="colleges">Colleges</div>
+    </nav>
+  </div>
+
+  <!-- main -->
+  <div class="main">
+
+    <!-- students -->
+    <div id="section-students" class="section active">
+      <div class="header">
+        <h1>Students</h1>
+        <button id="btn-add-student">Add Student</button>
+      </div>
+      <input type="text" id="student-search" placeholder="Search students...">
+      <div id="student-table-wrap">Loading...</div>
+    </div>
+
+    <!-- programs -->
+    <div id="section-programs" class="section">
+      <div class="header">
+        <h1>Programs</h1>
+        <button id="btn-add-program">Add Program</button>
+      </div>
+      <input type="text" id="program-search" placeholder="Search programs...">
+      <div id="program-table-wrap">Loading...</div>
+    </div>
+
+    <!-- colleges -->
+    <div id="section-colleges" class="section">
+      <div class="header">
+        <h1>Colleges</h1>
+        <button id="btn-add-college">Add College</button>
+      </div>
+      <input type="text" id="college-search" placeholder="Search colleges...">
+      <div id="college-table-wrap">Loading...</div>
+    </div>
+
+  </div>
+
+  <!-- student modal -->
+  <div class="modal" id="modal-student">
+    <div class="modal-content">
+      <h2 id="modal-student-title">Add Student</h2>
+      <input type="hidden" id="student-orig-id">
+      
+      <label>Student ID</label>
+      <input type="text" id="f-student-id" placeholder="2024-0001">
+      <span class="error" id="err-student-id"></span>
+
+      <label>First Name</label>
+      <input type="text" id="f-student-firstname">
+      <span class="error" id="err-student-firstname"></span>
+
+      <label>Last Name</label>
+      <input type="text" id="f-student-lastname">
+      <span class="error" id="err-student-lastname"></span>
+
+      <label>Program</label>
+      <select id="f-student-program">
+        <option value="">Select program...</option>
+      </select>
+      <span class="error" id="err-student-program"></span>
+
+      <label>Year</label>
+      <select id="f-student-year">
+        <option value="">Select year...</option>
+        <option value="1">1st Year</option>
+        <option value="2">2nd Year</option>
+        <option value="3">3rd Year</option>
+        <option value="4">4th Year</option>
+      </select>
+      <span class="error" id="err-student-year"></span>
+
+      <label>Gender</label>
+      <select id="f-student-gender">
+        <option value="">Select gender...</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+      <span class="error" id="err-student-gender"></span>
+
+      <div class="modal-buttons">
+        <button id="btn-submit-student">Save</button>
+        <button class="btn-cancel" data-modal="student">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- program modal -->
+  <div class="modal" id="modal-program">
+    <div class="modal-content">
+      <h2 id="modal-program-title">Add Program</h2>
+      <input type="hidden" id="program-orig-code">
+
+      <label>Program Code</label>
+      <input type="text" id="f-program-code" placeholder="BSCS">
+      <span class="error" id="err-program-code"></span>
+
+      <label>Program Name</label>
+      <input type="text" id="f-program-name">
+      <span class="error" id="err-program-name"></span>
+
+      <label>College</label>
+      <select id="f-program-college">
+        <option value="">Select college...</option>
+      </select>
+      <span class="error" id="err-program-college"></span>
+
+      <div class="modal-buttons">
+        <button id="btn-submit-program">Save</button>
+        <button class="btn-cancel" data-modal="program">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- college modal -->
+  <div class="modal" id="modal-college">
+    <div class="modal-content">
+      <h2 id="modal-college-title">Add College</h2>
+      <input type="hidden" id="college-orig-code">
+
+      <label>College Code</label>
+      <input type="text" id="f-college-code" placeholder="CCS">
+      <span class="error" id="err-college-code"></span>
+
+      <label>College Name</label>
+      <input type="text" id="f-college-name">
+      <span class="error" id="err-college-name"></span>
+
+      <div class="modal-buttons">
+        <button id="btn-submit-college">Save</button>
+        <button class="btn-cancel" data-modal="college">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- confirm delete modal -->
+  <div class="modal" id="modal-confirm">
+    <div class="modal-content">
+      <h2>Confirm Delete</h2>
+      <p id="confirm-text"></p>
+      <div class="modal-buttons">
+        <button id="btn-confirm-delete">Delete</button>
+        <button class="btn-cancel" data-modal="confirm">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- toast -->
+  <div id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
