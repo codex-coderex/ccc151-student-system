@@ -1,9 +1,8 @@
 # CCC151 Student Information System 🎓
 
-A lightweight, CSV-backed desktop application for managing Students, Programs, and Colleges — built with Go and Wails for a native desktop experience with no external database required.
+A lightweight, fully offline desktop app for managing Students, Programs, and Colleges — built with Go and Wails for a native experience without any external database.
 
-
-The CCC151 Student Information System is a fully offline desktop app built on the [Wails](https://wails.io/) framework, combining a Go backend with a plain JavaScript frontend. All data is persisted to local CSV files, making it portable and easy to set up with zero configuration. The app supports full CRUD operations across three core entities — Students, Programs, and College.
+CCC151 Student Information System uses a Go backend and plain JavaScript frontend, with all data stored in local CSV files. It supports full CRUD operations across Students, Programs, and Colleges, offering portability and zero-configuration setup.
 
 ---
 
