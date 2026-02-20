@@ -98,7 +98,18 @@ func UpdateCollege(code string, updated models.College) error {
 	if !found {
 		return errors.New("college not found")
 	}
-	return storage.WriteCSV(collegeFilePath, rows) // write everything back
+
+	if err := storage.WriteCSV(collegeFilePath, rows); err != nil {
+		return err
+	}
+
+	if code != updated.Code {
+		if err := updateProgramCollegeCode(code, updated.Code); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func DeleteCollege(code string) error {
@@ -123,5 +134,10 @@ func DeleteCollege(code string) error {
 	if !found {
 		return errors.New("college not found")
 	}
-	return storage.WriteCSV(collegeFilePath, newRows) // write updated list back
+
+	if err := storage.WriteCSV(collegeFilePath, newRows); err != nil {
+		return err
+	}
+
+	return updateStudentProgramCode(code, "")
 }

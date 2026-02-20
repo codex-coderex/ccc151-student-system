@@ -28,7 +28,8 @@ func studentToRow(student models.Student) []string {
 	return []string{
 		student.ID, student.FirstName,
 		student.LastName, student.ProgramCode,
-		student.Year, student.Gender}
+		student.Year, student.Gender,
+	}
 }
 
 func ListStudents() ([]models.Student, error) {
@@ -67,6 +68,12 @@ func GetStudent(id string) (*models.Student, error) {
 }
 
 func AddStudent(student models.Student) error {
+	if student.ProgramCode != "" {
+		if _, err := GetProgram(student.ProgramCode); err != nil {
+			return errors.New("program code does not exist")
+		}
+	}
+
 	students, err := ListStudents()
 	if err != nil {
 		return err
@@ -83,6 +90,12 @@ func AddStudent(student models.Student) error {
 }
 
 func UpdateStudent(id string, updated models.Student) error {
+	if updated.ProgramCode != "" {
+		if _, err := GetProgram(updated.ProgramCode); err != nil {
+			return errors.New("program code does not exist")
+		}
+	}
+
 	rows, err := storage.ReadCSV(studentFilePath)
 	if err != nil {
 		return err
@@ -107,7 +120,12 @@ func UpdateStudent(id string, updated models.Student) error {
 	if !found {
 		return errors.New("student not found")
 	}
-	return storage.WriteCSV(studentFilePath, rows)
+
+	if err := storage.WriteCSV(studentFilePath, rows); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func DeleteStudent(id string) error {
@@ -132,5 +150,10 @@ func DeleteStudent(id string) error {
 	if !found {
 		return errors.New("student not found")
 	}
-	return storage.WriteCSV(studentFilePath, newRows)
+
+	if err := storage.WriteCSV(studentFilePath, newRows); err != nil {
+		return err
+	}
+
+	return nil
 }

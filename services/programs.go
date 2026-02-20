@@ -61,11 +61,13 @@ func GetProgram(code string) (*models.Program, error) {
 	return nil, errors.New("program not found")
 }
 
-// TODO: add college checking
-// -------------------------
-// check if college code exists in all functions below this comment
-
 func AddProgram(program models.Program) error {
+	if program.CollegeCode != "" {
+		if _, err := GetCollege(program.CollegeCode); err == nil {
+			return errors.New("college code does not exist")
+		}
+	}
+
 	programs, err := ListPrograms()
 	if err != nil {
 		return err
@@ -82,11 +84,18 @@ func AddProgram(program models.Program) error {
 }
 
 func UpdateProgram(code string, updated models.Program) error {
+	if updated.CollegeCode != "" {
+		if _, err := GetCollege(updated.CollegeCode); err != nil {
+			return errors.New("college code does not exist")
+		}
+	}
+
 	rows, err := storage.ReadCSV(programFilePath)
 	if err != nil {
 		return err
 	}
 
+	found := false
 	for i, row := range rows {
 		if i == 0 {
 			continue // skip header row
@@ -97,11 +106,26 @@ func UpdateProgram(code string, updated models.Program) error {
 		}
 		if program.Code == code {
 			rows[i] = programToRow(updated)
-			return storage.WriteCSV(programFilePath, rows)
+			found = true
+			break
 		}
 	}
 
-	return errors.New("program not found")
+	if !found {
+		return errors.New("program not found")
+	}
+
+	if err := storage.WriteCSV(programFilePath, rows); err != nil {
+		return err
+	}
+
+	if code != updated.Code {
+		if err := updateStudentProgramCode(code, updated.Code); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func DeleteProgram(code string) error {
@@ -126,5 +150,10 @@ func DeleteProgram(code string) error {
 	if !found {
 		return errors.New("program not found")
 	}
-	return storage.WriteCSV(programFilePath, newRows)
+
+	if err := storage.WriteCSV(programFilePath, newRows); err != nil {
+		return nil
+	}
+
+	return updateStudentProgramCode(code, "")
 }
