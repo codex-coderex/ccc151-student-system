@@ -1,22 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SSIS - Student Information System</title>
+  <title>SSIS — Student Information System</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- sidebar  -->
+  <!-- sidebar -->
   <div class="sidebar">
-    <h2>SSIS</h2>
-    <p class="subtitle">MSU-IIT</p>
+    <div class="sidebar-brand">
+      <h2>SSIS</h2>
+      <p class="subtitle">MSU-IIT</p>
+    </div>
+
     <nav>
-      <div class="nav-item active" data-section="students">Students</div>
-      <div class="nav-item" data-section="programs">Programs</div>
-      <div class="nav-item" data-section="colleges">Colleges</div>
+      <div class="nav-item active" data-section="students">
+        <span class="nav-icon">👤</span> Students
+      </div>
+      <div class="nav-item" data-section="programs">
+        <span class="nav-icon">📚</span> Programs
+      </div>
+      <div class="nav-item" data-section="colleges">
+        <span class="nav-icon">🏛</span> Colleges
+      </div>
     </nav>
+
+    <div class="sidebar-footer">
+      <div class="theme-toggle" id="theme-toggle">
+        <span class="theme-toggle-label" id="theme-label">Light Mode</span>
+        <div class="toggle-switch"></div>
+      </div>
+    </div>
   </div>
 
   <!-- main -->
@@ -25,31 +41,52 @@
     <!-- students -->
     <div id="section-students" class="section active">
       <div class="header">
-        <h1>Students</h1>
-        <button id="btn-add-student">Add Student</button>
+        <div class="header-left">
+          <h1>Students</h1>
+          <p>Manage enrolled student records</p>
+        </div>
+        <button class="btn btn-primary" id="btn-add-student">+ Add Student</button>
       </div>
-      <input type="text" id="student-search" placeholder="Search students...">
-      <div id="student-table-wrap">Loading...</div>
+      <div class="search-wrap">
+        <input type="text" id="student-search" placeholder="Search by name, ID, or program…">
+      </div>
+      <div class="table-wrap" id="student-table-wrap">
+        <div class="loading">Loading students…</div>
+      </div>
     </div>
 
     <!-- programs -->
     <div id="section-programs" class="section">
       <div class="header">
-        <h1>Programs</h1>
-        <button id="btn-add-program">Add Program</button>
+        <div class="header-left">
+          <h1>Programs</h1>
+          <p>Manage academic programs</p>
+        </div>
+        <button class="btn btn-primary" id="btn-add-program">+ Add Program</button>
       </div>
-      <input type="text" id="program-search" placeholder="Search programs...">
-      <div id="program-table-wrap">Loading...</div>
+      <div class="search-wrap">
+        <input type="text" id="program-search" placeholder="Search by code, name, or college…">
+      </div>
+      <div class="table-wrap" id="program-table-wrap">
+        <div class="loading">Loading programs…</div>
+      </div>
     </div>
 
     <!-- colleges -->
     <div id="section-colleges" class="section">
       <div class="header">
-        <h1>Colleges</h1>
-        <button id="btn-add-college">Add College</button>
+        <div class="header-left">
+          <h1>Colleges</h1>
+          <p>Manage university colleges</p>
+        </div>
+        <button class="btn btn-primary" id="btn-add-college">+ Add College</button>
       </div>
-      <input type="text" id="college-search" placeholder="Search colleges...">
-      <div id="college-table-wrap">Loading...</div>
+      <div class="search-wrap">
+        <input type="text" id="college-search" placeholder="Search by code or name…">
+      </div>
+      <div class="table-wrap" id="college-table-wrap">
+        <div class="loading">Loading colleges…</div>
+      </div>
     </div>
 
   </div>
@@ -59,28 +96,28 @@
     <div class="modal-content">
       <h2 id="modal-student-title">Add Student</h2>
       <input type="hidden" id="student-orig-id">
-      
+
       <label>Student ID</label>
       <input type="text" id="f-student-id" placeholder="2024-0001">
       <span class="error" id="err-student-id"></span>
 
       <label>First Name</label>
-      <input type="text" id="f-student-firstname">
+      <input type="text" id="f-student-firstname" placeholder="Juan">
       <span class="error" id="err-student-firstname"></span>
 
       <label>Last Name</label>
-      <input type="text" id="f-student-lastname">
+      <input type="text" id="f-student-lastname" placeholder="dela Cruz">
       <span class="error" id="err-student-lastname"></span>
 
       <label>Program</label>
       <select id="f-student-program">
-        <option value="">Select program...</option>
+        <option value="">Select program…</option>
       </select>
       <span class="error" id="err-student-program"></span>
 
-      <label>Year</label>
+      <label>Year Level</label>
       <select id="f-student-year">
-        <option value="">Select year...</option>
+        <option value="">Select year…</option>
         <option value="1">1st Year</option>
         <option value="2">2nd Year</option>
         <option value="3">3rd Year</option>
@@ -90,15 +127,15 @@
 
       <label>Gender</label>
       <select id="f-student-gender">
-        <option value="">Select gender...</option>
+        <option value="">Select gender…</option>
         <option value="Male">Male</option>
         <option value="Female">Female</option>
       </select>
       <span class="error" id="err-student-gender"></span>
 
       <div class="modal-buttons">
-        <button id="btn-submit-student">Save</button>
-        <button class="btn-cancel" data-modal="student">Cancel</button>
+        <button class="btn btn-primary" id="btn-submit-student">Save</button>
+        <button class="btn btn-ghost btn-cancel" data-modal="student">Cancel</button>
       </div>
     </div>
   </div>
@@ -114,18 +151,18 @@
       <span class="error" id="err-program-code"></span>
 
       <label>Program Name</label>
-      <input type="text" id="f-program-name">
+      <input type="text" id="f-program-name" placeholder="Bachelor of Science in Computer Science">
       <span class="error" id="err-program-name"></span>
 
       <label>College</label>
       <select id="f-program-college">
-        <option value="">Select college...</option>
+        <option value="">Select college…</option>
       </select>
       <span class="error" id="err-program-college"></span>
 
       <div class="modal-buttons">
-        <button id="btn-submit-program">Save</button>
-        <button class="btn-cancel" data-modal="program">Cancel</button>
+        <button class="btn btn-primary" id="btn-submit-program">Save</button>
+        <button class="btn btn-ghost btn-cancel" data-modal="program">Cancel</button>
       </div>
     </div>
   </div>
@@ -141,12 +178,12 @@
       <span class="error" id="err-college-code"></span>
 
       <label>College Name</label>
-      <input type="text" id="f-college-name">
+      <input type="text" id="f-college-name" placeholder="College of Computer Studies">
       <span class="error" id="err-college-name"></span>
 
       <div class="modal-buttons">
-        <button id="btn-submit-college">Save</button>
-        <button class="btn-cancel" data-modal="college">Cancel</button>
+        <button class="btn btn-primary" id="btn-submit-college">Save</button>
+        <button class="btn btn-ghost btn-cancel" data-modal="college">Cancel</button>
       </div>
     </div>
   </div>
@@ -154,11 +191,12 @@
   <!-- confirm delete modal -->
   <div class="modal" id="modal-confirm">
     <div class="modal-content">
+      <div class="confirm-icon">🗑</div>
       <h2>Confirm Delete</h2>
       <p id="confirm-text"></p>
       <div class="modal-buttons">
-        <button id="btn-confirm-delete">Delete</button>
-        <button class="btn-cancel" data-modal="confirm">Cancel</button>
+        <button class="btn btn-danger" id="btn-confirm-delete">Delete</button>
+        <button class="btn btn-ghost btn-cancel" data-modal="confirm">Cancel</button>
       </div>
     </div>
   </div>
