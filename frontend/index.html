@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SSIS — Student Information System</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
 </head>
 <body>
 
@@ -29,7 +31,7 @@
 
     <div class="sidebar-footer">
       <div class="theme-toggle" id="theme-toggle">
-        <span class="theme-toggle-label" id="theme-label">Light Mode</span>
+        <span class="theme-toggle-label" id="theme-label">Dark Mode</span>
         <div class="toggle-switch"></div>
       </div>
     </div>
@@ -204,6 +206,12 @@
   <!-- toast -->
   <div id="toast-container"></div>
 
-  <script src="app.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/tables.js"></script>
+  <script src="js/modals.js"></script>
+  <script src="js/crud.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

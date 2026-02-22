@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg-base:        #f0f4fa;
+  --bg-surface:     #ffffff;
+  --bg-elevated:    #e8edf7;
+  --bg-hover:       #dde4f2;
+  --border:         #c8d3e8;
+  --border-subtle:  #dce4f0;
+  --text-primary:   #0a1628;
+  --text-secondary: #1e3a6e;
+  --text-muted:     #6b82aa;
+  --accent:         #1a3a8f;
+  --accent-hover:   #0f2870;
+  --accent-dim:     rgba(26, 58, 143, 0.08);
+  --danger:         #c43a3a;
+  --danger-hover:   #a82e2e;
+  --danger-dim:     rgba(196, 58, 58, 0.08);
+  --success:        #1a7a4a;
+  --warning:        #a07820;
+  --shadow-sm:      0 1px 3px rgba(10,22,60,0.08);
+  --shadow-md:      0 4px 16px rgba(10,22,60,0.12);
+  --shadow-lg:      0 8px 32px rgba(10,22,60,0.16);
+  --radius-sm:      6px;
+  --radius-md:      10px;
+  --radius-lg:      14px;
+  --transition:     all 0.2s ease;
+  --transition-slow: all 0.35s ease;
+}
+
+[data-theme="dark"] {
+  --bg-base:        #0c0f1a;
+  --bg-surface:     #111827;
+  --bg-elevated:    #161e30;
+  --bg-hover:       #1c2640;
+  --border:         #243050;
+  --border-subtle:  #182038;
+  --text-primary:   #f0e6c8;
+  --text-secondary: #9da8c2;
+  --text-muted:     #4e5a7a;
+  --accent:         #c9a84c;
+  --accent-hover:   #e0c070;
+  --accent-dim:     rgba(201, 168, 76, 0.12);
+  --danger:         #e05252;
+  --danger-hover:   #c94444;
+  --danger-dim:     rgba(224, 82, 82, 0.12);
+  --success:        #3ecf8e;
+  --warning:        #c9a84c;
+  --shadow-sm:      0 1px 3px rgba(0,0,0,0.5);
+  --shadow-md:      0 4px 16px rgba(0,0,0,0.6);
+  --shadow-lg:      0 8px 32px rgba(0,0,0,0.7);
+}
