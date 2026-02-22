@@ -1,70 +1,85 @@
 // data loading and CRUD submit/delete handlers
+
 function loadAll() {
   go.ListColleges().then(function(d) {
-    colleges = d || []; filtered.college = colleges; pages.college = 1;
+    colleges = d || []; filtered.college = colleges; original.college = colleges.slice(); pages.college = 1;
     renderTable('college', filtered.college);
     fillDropdown('f-program-college', colleges, 'Code', 'Name');
   });
   go.ListPrograms().then(function(d) {
-    programs = d || []; filtered.program = programs; pages.program = 1;
+    programs = d || []; filtered.program = programs; original.program = programs.slice(); pages.program = 1;
     renderTable('program', filtered.program);
     fillDropdown('f-student-program', programs, 'Code', 'Name');
   });
   go.ListStudents().then(function(d) {
-    students = d || []; filtered.student = students; pages.student = 1;
+    students = d || []; filtered.student = students; original.student = students.slice(); pages.student = 1;
     renderTable('student', filtered.student);
   });
 }
 
 function submitStudent() {
-  var id = document.getElementById('f-student-id').value.trim();
-  var fn = document.getElementById('f-student-firstname').value.trim();
-  var ln = document.getElementById('f-student-lastname').value.trim();
-  var pr = document.getElementById('f-student-program').value;
-  var yr = document.getElementById('f-student-year').value;
-  var gn = document.getElementById('f-student-gender').value;
-  if (!id || !fn || !ln || !pr || !yr || !gn) { showErr('student-id', 'All fields are required'); return; }
-  var orig = document.getElementById('student-orig-id').value;
+  var yr_part = val('f-student-id-year');
+  var seq_part = val('f-student-id-seq');
+  var id = yr_part && seq_part ? yr_part + '-' + seq_part : '';
+  var fn = val('f-student-firstname');
+  var ln = val('f-student-lastname');
+  var pr = val('f-student-program');
+  var yr = val('f-student-year');
+  var gn = val('f-student-gender');
+
+  var valid = runValidations([
+    ['student-id',        validateStudentID(id)],
+    ['student-firstname', validateName(fn, 'First name')],
+    ['student-lastname',  validateName(ln, 'Last name')],
+    ['student-program',   !pr ? 'Program is required' : null],
+    ['student-year',      !yr ? 'Year level is required' : null],
+    ['student-gender',    !gn ? 'Gender is required' : null],
+  ]);
+  if (!valid) return;
+
+  var orig = val('student-orig-id');
   var p = orig ? go.UpdateStudent(orig, id, fn, ln, pr, yr, gn) : go.AddStudent(id, fn, ln, pr, yr, gn);
   p.then(function() {
     toast('Student saved successfully'); closeModal('student');
-    go.ListStudents().then(function(d) {
-      students = d || []; filtered.student = students; pages.student = 1;
-      renderTable('student', filtered.student);
-    });
+    go.ListStudents().then(function(d) { students = d || []; filtered.student = students; original.student = students.slice(); pages.student = 1; renderTable('student', filtered.student); });
   }).catch(function(e) { showErr('student-id', e); });
 }
 
 function submitProgram() {
-  var code = document.getElementById('f-program-code').value.trim();
-  var name = document.getElementById('f-program-name').value.trim();
-  var col  = document.getElementById('f-program-college').value;
-  if (!code || !name || !col) { showErr('program-code', 'All fields are required'); return; }
-  var orig = document.getElementById('program-orig-code').value;
+  var code = val('f-program-code');
+  var name = val('f-program-name');
+  var col  = val('f-program-college');
+
+  var valid = runValidations([
+    ['program-code', validateCode(code, 'Program code')],
+    ['program-name', validateLabel(name, 'Program name')],
+    ['program-code', !col ? 'College is required' : null],
+  ]);
+  if (!valid) return;
+
+  var orig = val('program-orig-code');
   var p = orig ? go.UpdateProgram(orig, code, name, col) : go.AddProgram(code, name, col);
   p.then(function() {
     toast('Program saved successfully'); closeModal('program');
-    go.ListPrograms().then(function(d) {
-      programs = d || []; filtered.program = programs; pages.program = 1;
-      renderTable('program', filtered.program);
-      fillDropdown('f-student-program', programs, 'Code', 'Name');
-    });
+    go.ListPrograms().then(function(d) { programs = d || []; filtered.program = programs; original.program = programs.slice(); pages.program = 1; renderTable('program', filtered.program); fillDropdown('f-student-program', programs, 'Code', 'Name'); });
   }).catch(function(e) { showErr('program-code', e); });
 }
 
 function submitCollege() {
-  var code = document.getElementById('f-college-code').value.trim();
-  var name = document.getElementById('f-college-name').value.trim();
-  if (!code || !name) { showErr('college-code', 'All fields are required'); return; }
-  var orig = document.getElementById('college-orig-code').value;
+  var code = val('f-college-code');
+  var name = val('f-college-name');
+
+  var valid = runValidations([
+    ['college-code', validateCode(code, 'College code')],
+    ['college-name', validateLabel(name, 'College name')],
+  ]);
+  if (!valid) return;
+
+  var orig = val('college-orig-code');
   var p = orig ? go.UpdateCollege(orig, code, name) : go.AddCollege(code, name);
   p.then(function() {
     toast('College saved successfully'); closeModal('college');
-    go.ListColleges().then(function(d) {
-      colleges = d || []; filtered.college = colleges; pages.college = 1;
-      renderTable('college', filtered.college);
-      fillDropdown('f-program-college', colleges, 'Code', 'Name');
-    });
+    go.ListColleges().then(function(d) { colleges = d || []; filtered.college = colleges; original.college = colleges.slice(); pages.college = 1; renderTable('college', filtered.college); fillDropdown('f-program-college', colleges, 'Code', 'Name'); });
   }).catch(function(e) { showErr('college-code', e); });
 }
 

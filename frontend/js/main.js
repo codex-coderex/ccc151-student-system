@@ -1,37 +1,41 @@
-// entry point — wires up all event listeners on load
+// entry point 
 window.addEventListener('load', function() {
   loadAll();
   initTheme();
   initResize();
+  initComboboxes();
+
+  // set default student ID year
+  setVal('f-student-id-year', new Date().getFullYear());
 
   // nav
-  document.querySelectorAll('.nav-item').forEach(function(el) {
-    el.addEventListener('click', function() {
+  document.querySelectorAll('.nav-item').forEach(function(navEl) {
+    navEl.addEventListener('click', function() {
       document.querySelectorAll('.nav-item').forEach(function(x) { x.classList.remove('active'); });
       document.querySelectorAll('.section').forEach(function(x) { x.classList.remove('active'); });
-      el.classList.add('active');
-      document.getElementById('section-' + el.dataset.section).classList.add('active');
+      navEl.classList.add('active');
+      el('section-' + navEl.dataset.section).classList.add('active');
     });
   });
 
   // cancel buttons
-  document.querySelectorAll('.btn-cancel').forEach(function(el) {
-    el.addEventListener('click', function() { closeModal(el.dataset.modal); });
+  document.querySelectorAll('.btn-cancel').forEach(function(btn) {
+    btn.addEventListener('click', function() { closeModal(btn.dataset.modal); });
   });
 
   // add buttons
-  document.getElementById('btn-add-student').onclick = function() { openModal('student'); resetForm('student'); };
-  document.getElementById('btn-add-program').onclick  = function() { openModal('program'); resetForm('program'); };
-  document.getElementById('btn-add-college').onclick  = function() { openModal('college'); resetForm('college'); };
+  el('btn-add-student').onclick = function() { openModal('student'); resetForm('student'); };
+  el('btn-add-program').onclick = function() { openModal('program'); resetForm('program'); };
+  el('btn-add-college').onclick = function() { openModal('college'); resetForm('college'); };
 
   // submit buttons
-  document.getElementById('btn-submit-student').onclick = submitStudent;
-  document.getElementById('btn-submit-program').onclick = submitProgram;
-  document.getElementById('btn-submit-college').onclick = submitCollege;
-  document.getElementById('btn-confirm-delete').onclick = function() { if (deleteFn) deleteFn(); };
+  el('btn-submit-student').onclick = submitStudent;
+  el('btn-submit-program').onclick = submitProgram;
+  el('btn-submit-college').onclick = submitCollege;
+  el('btn-confirm-delete').onclick = function() { if (deleteFn) deleteFn(); };
 
   // search
-  document.getElementById('student-search').oninput = function() {
+  el('student-search').oninput = function() {
     var q = this.value.toLowerCase();
     filtered.student = students.filter(function(s) {
       return (s.ID + s.FirstName + s.LastName + s.ProgramCode).toLowerCase().includes(q);
@@ -39,7 +43,8 @@ window.addEventListener('load', function() {
     pages.student = 1;
     renderTable('student', filtered.student);
   };
-  document.getElementById('program-search').oninput = function() {
+
+  el('program-search').oninput = function() {
     var q = this.value.toLowerCase();
     var base = programs.filter(function(p) {
       return (p.Code + p.Name + p.CollegeCode).toLowerCase().includes(q);
@@ -50,7 +55,8 @@ window.addEventListener('load', function() {
     pages.program = 1;
     renderTable('program', filtered.program);
   };
-  document.getElementById('college-search').oninput = function() {
+
+  el('college-search').oninput = function() {
     var q = this.value.toLowerCase();
     filtered.college = colleges.filter(function(c) {
       return (c.Code + c.Name).toLowerCase().includes(q);

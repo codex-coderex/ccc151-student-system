@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/combobox.css">
 </head>
 <body>
 
@@ -100,40 +101,66 @@
       <input type="hidden" id="student-orig-id">
 
       <label>Student ID</label>
-      <input type="text" id="f-student-id" placeholder="2024-0001">
+      <div class="id-input-wrap">
+        <div class="id-input-wrap">
+            <input type="text" id="f-student-id-year" maxlength="4" placeholder="2026" style="width:80px;">
+            <span class="id-separator">—</span>
+            <input type="text" id="f-student-id-seq" placeholder="0001" maxlength="4">
+          </div>
+      </div>
       <span class="error" id="err-student-id"></span>
 
-      <label>First Name</label>
-      <input type="text" id="f-student-firstname" placeholder="Juan">
-      <span class="error" id="err-student-firstname"></span>
+      <div class="form-row">
+        <div class="form-col">
+          <label>First Name</label>
+          <input type="text" id="f-student-firstname" placeholder="Juan">
+          <span class="error" id="err-student-firstname"></span>
+        </div>
+        <div class="form-col">
+          <label>Last Name</label>
+          <input type="text" id="f-student-lastname" placeholder="dela Cruz">
+          <span class="error" id="err-student-lastname"></span>
+        </div>
+      </div>
 
-      <label>Last Name</label>
-      <input type="text" id="f-student-lastname" placeholder="dela Cruz">
-      <span class="error" id="err-student-lastname"></span>
+      <label>College</label>
+      <div class="combobox" id="college-combobox">
+        <input type="text" id="f-student-college-search" placeholder="Type to search college…" autocomplete="off">
+        <div class="combobox-list" id="college-combobox-list"></div>
+      </div>
+      <input type="hidden" id="f-student-college">
+      <span class="error" id="err-student-college"></span>
 
       <label>Program</label>
-      <select id="f-student-program">
-        <option value="">Select program…</option>
-      </select>
+      <div class="combobox" id="program-combobox">
+        <input type="text" id="f-student-program-search" placeholder="Type to search program…" autocomplete="off">
+        <div class="combobox-list" id="program-combobox-list"></div>
+      </div>
+      <input type="hidden" id="f-student-program">
       <span class="error" id="err-student-program"></span>
 
-      <label>Year Level</label>
-      <select id="f-student-year">
-        <option value="">Select year…</option>
-        <option value="1">1st Year</option>
-        <option value="2">2nd Year</option>
-        <option value="3">3rd Year</option>
-        <option value="4">4th Year</option>
-      </select>
-      <span class="error" id="err-student-year"></span>
-
-      <label>Gender</label>
-      <select id="f-student-gender">
-        <option value="">Select gender…</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </select>
-      <span class="error" id="err-student-gender"></span>
+      <div class="form-row">
+        <div class="form-col">
+          <label>Year Level</label>
+          <select id="f-student-year">
+            <option value="">Select year…</option>
+            <option value="1">1st Year</option>
+            <option value="2">2nd Year</option>
+            <option value="3">3rd Year</option>
+            <option value="4">4th Year</option>
+          </select>
+          <span class="error" id="err-student-year"></span>
+        </div>
+        <div class="form-col">
+          <label>Gender</label>
+          <select id="f-student-gender">
+            <option value="">Select gender…</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+          <span class="error" id="err-student-gender"></span>
+        </div>
+      </div>
 
       <div class="modal-buttons">
         <button class="btn btn-primary" id="btn-submit-student">Save</button>
@@ -157,10 +184,11 @@
       <span class="error" id="err-program-name"></span>
 
       <label>College</label>
-      <select id="f-program-college">
-        <option value="">Select college…</option>
-      </select>
-      <span class="error" id="err-program-college"></span>
+      <div class="combobox" id="program-college-combobox">
+        <input type="text" id="f-program-college-search" placeholder="Type to search college…" autocomplete="off">
+        <div class="combobox-list" id="program-college-combobox-list"></div>
+      </div>
+      <input type="hidden" id="f-program-college">
 
       <div class="modal-buttons">
         <button class="btn btn-primary" id="btn-submit-program">Save</button>
@@ -209,6 +237,7 @@
   <script src="js/state.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/tables.js"></script>
+  <script src="js/combobox.js"></script>
   <script src="js/modals.js"></script>
   <script src="js/crud.js"></script>
   <script src="js/theme.js"></script>

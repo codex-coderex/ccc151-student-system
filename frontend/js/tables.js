@@ -1,6 +1,7 @@
 // table rendering and pagination
+
 function renderTable(type, data) {
-  var wrap = document.getElementById(type + '-table-wrap');
+  var wrap = el(type + '-table-wrap');
 
   if (!data || data.length === 0) {
     wrap.innerHTML = '<div class="empty"><div class="empty-icon">📭</div>No ' + type + 's found</div>';
@@ -25,82 +26,115 @@ function renderTable(type, data) {
     : function(r) { return r.Name; };
 
   var html = '<table><thead><tr>';
-  cols.forEach(function(c) { html += '<th>' + c[1] + '</th>'; });
+  cols.forEach(function(c) {
+    var arrow = sort[type].col === c[0] ? (sort[type].asc ? ' ↑' : ' ↓') : ' ↕';
+    html += '<th onclick="sortTable(\'' + type + '\',\'' + c[0] + '\')" style="cursor:pointer">' + c[1] + arrow + '</th>';
+  });
   html += '<th>Actions</th></tr></thead><tbody>';
 
-  if (type === 'program') {
-    html += renderProgramGroups(slice, cols);
-  } else {
-    slice.forEach(function(row) {
-      html += '<tr>';
-      cols.forEach(function(c) {
-        var val = row[c[0]] || '';
-        if (!val && c[0] === 'ProgramCode') {
-          html += '<td><span class="badge badge-warning">Unenrolled</span></td>';
-        } else {
-          html += '<td>' + val + '</td>';
-        }
-      });
-      html += '<td>'
-        + '<button class="btn-edit-sm" onclick="openEdit(\'' + type + '\',\'' + row[key] + '\')">Edit</button>'
-        + '<button class="btn-delete-sm" onclick="askDelete(\'' + type + '\',\'' + row[key] + '\',\'' + label(row) + '\')">Delete</button>'
-        + '</td></tr>';
-    });
-  }
+  html += type === 'program'
+    ? renderProgramGroups(slice, cols)
+    : renderRows(slice, cols, type, key, label);
 
   html += '</tbody></table>';
-  html += '<div class="pagination">'
-    + '<span class="page-info">' + data.length + ' total</span>'
+  html += buildPagination(type, data.length, page, totalPages);
+
+  wrap.innerHTML = html;
+}
+
+function renderRows(slice, cols, type, key, label) {
+  var html = '';
+  slice.forEach(function(row) {
+    html += '<tr>';
+    cols.forEach(function(c) {
+      var v = row[c[0]] || '';
+      html += !v && c[0] === 'ProgramCode'
+        ? '<td><span class="badge badge-warning">Unenrolled</span></td>'
+        : '<td>' + v + '</td>';
+    });
+    html += '<td>' + rowActions(type, row[key], label(row)) + '</td></tr>';
+  });
+  return html;
+}
+
+function rowActions(type, key, label) {
+  return '<button class="btn-edit-sm" onclick="openEdit(\'' + type + '\',\'' + key + '\')">Edit</button>'
+       + '<button class="btn-delete-sm" onclick="askDelete(\'' + type + '\',\'' + key + '\',\'' + label + '\')">Delete</button>';
+}
+
+function buildPagination(type, total, page, totalPages) {
+  return '<div class="pagination">'
+    + '<span class="page-info">' + total + ' total</span>'
     + '<div class="page-controls">'
     + '<button class="page-btn" onclick="changePage(\'' + type + '\',-1)" ' + (page <= 1 ? 'disabled' : '') + '>&#8592;</button>'
     + '<span class="page-current">Page ' + page + ' of ' + totalPages + '</span>'
     + '<button class="page-btn" onclick="changePage(\'' + type + '\',1)" ' + (page >= totalPages ? 'disabled' : '') + '>&#8594;</button>'
-    + '</div>'
-    + '</div>';
-
-  wrap.innerHTML = html;
+    + '</div></div>';
 }
 
 function renderProgramGroups(slice, cols) {
   var html = '';
   var groups = {}, groupOrder = [];
   slice.forEach(function(row) {
-    var cCode = row.CollegeCode || '';
-    if (!groups[cCode]) { groups[cCode] = []; groupOrder.push(cCode); }
-    groups[cCode].push(row);
+    var cc = row.CollegeCode || '';
+    if (!groups[cc]) { groups[cc] = []; groupOrder.push(cc); }
+    groups[cc].push(row);
   });
 
-  groupOrder.forEach(function(cCode) {
-    var college      = colleges.find(function(c) { return c.Code === cCode; });
-    var collegeLabel = college ? cCode + ' \u2014 ' + college.Name : cCode || 'Unenrolled';
-    var isActive     = programCollegeFilter === cCode;
+  groupOrder.forEach(function(cc) {
+    var college      = colleges.find(function(c) { return c.Code === cc; });
+    var collegeLabel = college ? cc + ' \u2014 ' + college.Name : cc || 'Unenrolled';
+    var isActive     = programCollegeFilter === cc;
 
-    var opts = '<div class="college-dropdown" id="cdrop-' + cCode + '">'
+    var opts = '<div class="college-dropdown" id="cdrop-' + cc + '">'
       + '<div class="college-dropdown-item' + (!programCollegeFilter ? ' active' : '') + '" onclick="filterByCollege(null)">All Programs</div>';
     colleges.forEach(function(c) {
-      var itemClass = programCollegeFilter === c.Code ? ' active' : '';
-      opts += '<div class="college-dropdown-item' + itemClass + '" onclick="filterByCollege(\'' + c.Code + '\')">'
+      opts += '<div class="college-dropdown-item' + (programCollegeFilter === c.Code ? ' active' : '') + '" onclick="filterByCollege(\'' + c.Code + '\')">'
         + c.Code + ' \u2014 ' + c.Name + '</div>';
     });
     opts += '</div>';
 
     html += '<tr class="group-header' + (isActive ? ' group-header-active' : '') + '">'
-      + '<td colspan="' + (cols.length + 1) + '" onclick="toggleCollegeDropdown(event, \'' + cCode + '\')">'
+      + '<td colspan="' + (cols.length + 1) + '" onclick="toggleCollegeDropdown(event, \'' + cc + '\')">'
       + '<span class="group-header-label">' + collegeLabel + '</span>'
       + '<span class="group-header-arrow">\u25be</span>'
       + opts + '</td></tr>';
 
-    groups[cCode].forEach(function(row) {
+    groups[cc].forEach(function(row) {
       html += '<tr>'
         + '<td>' + row.Code + '</td>'
         + '<td>' + row.Name + '</td>'
-        + '<td>'
-        + '<button class="btn-edit-sm" onclick="openEdit(\'program\',\'' + row.Code + '\')">Edit</button>'
-        + '<button class="btn-delete-sm" onclick="askDelete(\'program\',\'' + row.Code + '\',\'' + row.Name + '\')">Delete</button>'
-        + '</td></tr>';
+        + '<td>' + rowActions('program', row.Code, row.Name) + '</td></tr>';
     });
   });
   return html;
+}
+
+function applySort(type) {
+  var s = sort[type];
+  if (!s.col) {
+    // restore original load order
+    filtered[type] = original[type].slice();
+    return;
+  }
+  filtered[type].sort(function(a, b) {
+    var av = (a[s.col] || '').toLowerCase();
+    var bv = (b[s.col] || '').toLowerCase();
+    return av < bv ? (s.asc ? -1 : 1) : av > bv ? (s.asc ? 1 : -1) : 0;
+  });
+}
+
+function sortTable(type, col) {
+  var s = sort[type];
+  if (s.col !== col) {
+    s.col = col; s.asc = true;          // new column — start ascending
+  } else if (s.asc) {
+    s.asc = false;                       // second click — descending
+  } else {
+    s.col = null;                        // third click — back to neutral
+  }
+  applySort(type);
+  renderTable(type, filtered[type]);
 }
 
 function changePage(type, dir) {
@@ -111,9 +145,10 @@ function changePage(type, dir) {
 }
 
 function fillDropdown(id, data, valKey, labelKey) {
-  var sel  = document.getElementById(id);
+  var sel  = el(id);
+  if (!sel) return;
   var prev = sel.value;
-  sel.innerHTML = '<option value=""">Select\u2026</option>';
+  sel.innerHTML = '<option value="">Select\u2026</option>';
   data.forEach(function(d) {
     sel.innerHTML += '<option value="' + d[valKey] + '">' + d[valKey] + ' \u2014 ' + d[labelKey] + '</option>';
   });
@@ -123,7 +158,7 @@ function fillDropdown(id, data, valKey, labelKey) {
 function filterByCollege(code) {
   programCollegeFilter = code;
   pages.program = 1;
-  var q = document.getElementById('program-search').value.toLowerCase();
+  var q = el('program-search').value.toLowerCase();
   var base = programs.filter(function(p) {
     return (p.Code + p.Name + p.CollegeCode).toLowerCase().includes(q);
   });
@@ -132,9 +167,9 @@ function filterByCollege(code) {
   document.querySelectorAll('.college-dropdown').forEach(function(d) { d.classList.remove('open'); });
 }
 
-function toggleCollegeDropdown(event, cCode) {
+function toggleCollegeDropdown(event, cc) {
   event.stopPropagation();
-  var drop = document.getElementById('cdrop-' + cCode);
+  var drop = el('cdrop-' + cc);
   if (!drop) return;
   var isOpen = drop.classList.contains('open');
   document.querySelectorAll('.college-dropdown').forEach(function(d) { d.classList.remove('open'); });

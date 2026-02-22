@@ -2,12 +2,23 @@ package services
 
 import (
 	"errors"
+	"unicode/utf8"
 
 	"student-system/models"
 	"student-system/storage"
 )
 
 const programFilePath = "data/programs.csv"
+
+func validateProgramName(name string) error {
+	if name == "" {
+		return errors.New("program name is required")
+	}
+	if utf8.RuneCountInString(name) > 128 {
+		return errors.New("program name must be 128 characters or fewer")
+	}
+	return nil
+}
 
 func rowToProgram(row []string) (models.Program, error) {
 	if len(row) < 3 {
@@ -34,7 +45,7 @@ func ListPrograms() ([]models.Program, error) {
 	var programs []models.Program
 	for i, row := range rows {
 		if i == 0 {
-			continue // skip header row
+			continue
 		}
 		program, err := rowToProgram(row)
 		if err != nil {
@@ -62,8 +73,15 @@ func GetProgram(code string) (*models.Program, error) {
 }
 
 func AddProgram(program models.Program) error {
+	if err := validateCode(program.Code, "Program code"); err != nil {
+		return err
+	}
+	if err := validateProgramName(program.Name); err != nil {
+		return err
+	}
+
 	if program.CollegeCode != "" {
-		if _, err := GetCollege(program.CollegeCode); err == nil {
+		if _, err := GetCollege(program.CollegeCode); err != nil {
 			return errors.New("college code does not exist")
 		}
 	}
@@ -73,10 +91,12 @@ func AddProgram(program models.Program) error {
 		return err
 	}
 
-	// check for duplicate code
 	for _, existing := range programs {
 		if existing.Code == program.Code {
 			return errors.New("program code already exists")
+		}
+		if existing.Name == program.Name {
+			return errors.New("program name already exists")
 		}
 	}
 
@@ -84,6 +104,13 @@ func AddProgram(program models.Program) error {
 }
 
 func UpdateProgram(code string, updated models.Program) error {
+	if err := validateCode(updated.Code, "Program code"); err != nil {
+		return err
+	}
+	if err := validateProgramName(updated.Name); err != nil {
+		return err
+	}
+
 	if updated.CollegeCode != "" {
 		if _, err := GetCollege(updated.CollegeCode); err != nil {
 			return errors.New("college code does not exist")
@@ -95,10 +122,20 @@ func UpdateProgram(code string, updated models.Program) error {
 		return err
 	}
 
+	// Check for duplicate name (excluding self)
+	for i, row := range rows {
+		if i == 0 {
+			continue
+		}
+		if row[0] != code && row[1] == updated.Name {
+			return errors.New("program name already exists")
+		}
+	}
+
 	found := false
 	for i, row := range rows {
 		if i == 0 {
-			continue // skip header row
+			continue
 		}
 		program, err := rowToProgram(row)
 		if err != nil {
@@ -134,15 +171,15 @@ func DeleteProgram(code string) error {
 		return err
 	}
 
-	newRows := [][]string{rows[0]} // keep header
+	newRows := [][]string{rows[0]}
 	found := false
 	for i, row := range rows {
 		if i == 0 {
-			continue // skip header
+			continue
 		}
 		if row[0] == code {
 			found = true
-			continue // skip this row to delete
+			continue
 		}
 		newRows = append(newRows, row)
 	}
@@ -152,7 +189,7 @@ func DeleteProgram(code string) error {
 	}
 
 	if err := storage.WriteCSV(programFilePath, newRows); err != nil {
-		return nil
+		return err
 	}
 
 	return updateStudentProgramCode(code, "")
