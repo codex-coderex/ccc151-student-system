@@ -2,6 +2,7 @@ package storage
 
 import (
 	"encoding/csv"
+	"errors"
 	"os"
 	"path/filepath"
 	"sync"
@@ -39,7 +40,13 @@ func ReadCSV(filename string) ([][]string, error) {
 	mu.RLock()
 	defer mu.RUnlock()
 
-	file, err := os.Open(resolvePath(filename))
+	path := resolvePath(filename)
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return [][]string{}, nil
+	}
+
+	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
@@ -51,6 +58,10 @@ func ReadCSV(filename string) ([][]string, error) {
 		return nil, err
 	}
 
+	if len(rows) == 0 {
+		return [][]string{}, nil
+	}
+
 	return rows, nil
 }
 
@@ -58,7 +69,13 @@ func WriteCSV(filename string, rows [][]string) error {
 	mu.Lock()
 	defer mu.Unlock()
 
-	file, err := os.Create(resolvePath(filename))
+	path := resolvePath(filename)
+
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return err
+	}
+
+	file, err := os.Create(path)
 	if err != nil {
 		return err
 	}
@@ -74,7 +91,16 @@ func AppendCSV(filename string, row []string) error {
 	mu.Lock()
 	defer mu.Unlock()
 
-	file, err := os.OpenFile(resolvePath(filename), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	path := resolvePath(filename)
+
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return err
+	}
+
+	_, statErr := os.Stat(path)
+	isNewFile := os.IsNotExist(statErr)
+
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
@@ -83,5 +109,24 @@ func AppendCSV(filename string, row []string) error {
 	writer := csv.NewWriter(file)
 	defer writer.Flush()
 
+	if isNewFile {
+		var header []string
+		switch filepath.Base(filename) {
+		case "colleges.csv":
+			header = []string{"code", "name"}
+		case "programs.csv":
+			header = []string{"code", "name", "college"}
+		case "students.csv":
+			header = []string{"id", "firstname", "lastname", "program", "year", "gender"}
+		default:
+			return errors.New("unknown CSV file")
+		}
+
+		if header != nil {
+			if err := writer.Write(header); err != nil {
+				return err
+			}
+		}
+	}
 	return writer.Write(row)
 }
