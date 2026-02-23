@@ -13,7 +13,7 @@ import (
 const studentFilePath = "data/students.csv"
 
 var studentIDPattern = regexp.MustCompile(`^\d{4}-\d{4}$`)
-var namePattern = regexp.MustCompile(`^[a-zA-Z\s\-'.]+$`)
+var namePattern = regexp.MustCompile(`^[a-zA-ZÀ-ÖØ-öø-ÿñÑ\s\-'.]+$`)
 
 func validateStudentID(id string) error {
 	if id == "" {

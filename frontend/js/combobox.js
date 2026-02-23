@@ -52,7 +52,7 @@ function createCombobox(inputId, listId, hiddenId, getItems, onSelect) {
   });
 
   input.addEventListener('focus', function() {
-    if (this.value.trim()) renderList(this.value);
+    renderList(this.value);
   });
 
   input.addEventListener('blur', function() {
@@ -104,7 +104,10 @@ function initComboboxes() {
         ? programs.filter(function(p) { return p.CollegeCode === code; })
         : programs;
     },
-    null
+    function(p) {
+      // when program is selected, populate college from program's college code
+      if (p && p.CollegeCode) collegeCombobox.set(p.CollegeCode);
+    }
   );
 
   // program modal — college

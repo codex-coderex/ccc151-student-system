@@ -40,7 +40,7 @@ function validateStudentID(id) {
 function validateName(name, field) {
   if (!name) return field + ' is required';
   if (name.length > 64) return field + ' must be 64 characters or fewer';
-  if (!/^[a-zA-Z\s\-'.]+$/.test(name)) return field + ' contains invalid characters';
+  if (!/^[a-zA-ZÀ-ÖØ-öø-ÿñÑ\s\-'.]+$/.test(name)) return field + ' contains invalid characters';
   return null;
 }
 
