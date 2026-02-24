@@ -159,7 +159,8 @@ wails build -o Scholaris
 chmod +x build/bin/Scholaris
 ```
 
-> **Note:** The executable resolves the `data/` folder relative to its own location. Keep `data/` in the same directory as the binary when distributing.
+> **Note:** The executable resolves the `data/` folder relative to its own location.
+> **Note:** Due to this, when the executable builds in `/bin`, you must move it outside to the root `student-system` folder.
 
 ## Package Documentation 📦
 
