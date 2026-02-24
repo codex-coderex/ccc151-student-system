@@ -1,6 +1,5 @@
 # Build output
 build/
-data/
 
 # Wails auto-generated (recreated on every wails dev)
 frontend/wailsjs/

@@ -2,17 +2,58 @@
 
 function loadAll() {
   go.ListColleges().then(function(d) {
-    colleges = d || []; filtered.college = colleges; original.college = colleges.slice(); pages.college = 1;
-    renderTable('college', filtered.college);
+    colleges = d || []; original.college = colleges.slice();
+    reloadType('college');
   });
   go.ListPrograms().then(function(d) {
-    programs = d || []; filtered.program = programs; original.program = programs.slice(); pages.program = 1;
-    renderTable('program', filtered.program);
+    programs = d || []; original.program = programs.slice();
+    reloadType('program');
   });
   go.ListStudents().then(function(d) {
-    students = d || []; filtered.student = students; original.student = students.slice(); pages.student = 1;
-    renderTable('student', filtered.student);
+    students = d || []; original.student = students.slice();
+    reloadType('student');
   });
+}
+
+function reloadType(type) {
+  var q = (el(type + '-search') ? el(type + '-search').value : '').toLowerCase();
+
+  if (type === 'student') {
+    filtered.student = students.filter(function(s) {
+      return (s.ID + s.FirstName + s.LastName + s.ProgramCode).toLowerCase().includes(q);
+    });
+
+  } else if (type === 'program') {
+    var base = programs.filter(function(p) {
+      return (p.Code + p.Name + p.CollegeCode).toLowerCase().includes(q);
+    });
+
+    if (programCollegeFilter !== null) {
+      var stillHasMatch = programCollegeFilter === '__UNASSIGNED__'
+        ? programs.some(function(p) { return !p.CollegeCode; })
+        : programs.some(function(p) { return p.CollegeCode === programCollegeFilter; });
+      if (!stillHasMatch) programCollegeFilter = null;
+    }
+
+    if (programCollegeFilter === '__UNASSIGNED__') {
+      filtered.program = base.filter(function(p) { return !p.CollegeCode; });
+    } else if (programCollegeFilter) {
+      filtered.program = base.filter(function(p) { return p.CollegeCode === programCollegeFilter; });
+    } else {
+      filtered.program = base;
+    }
+
+  } else {
+    filtered.college = colleges.filter(function(c) {
+      return (c.Code + c.Name).toLowerCase().includes(q);
+    });
+  }
+
+  var ps = pageSize();
+  var totalPages = Math.max(1, Math.ceil(filtered[type].length / ps));
+  pages[type] = Math.min(pages[type], totalPages);
+
+  renderTable(type, filtered[type]);
 }
 
 function submitStudent() {
@@ -39,7 +80,10 @@ function submitStudent() {
   var p = orig ? go.UpdateStudent(orig, id, fn, ln, pr, yr, gn) : go.AddStudent(id, fn, ln, pr, yr, gn);
   p.then(function() {
     toast('Student saved successfully'); closeModal('student');
-    go.ListStudents().then(function(d) { students = d || []; filtered.student = students; original.student = students.slice(); pages.student = 1; renderTable('student', filtered.student); });
+    go.ListStudents().then(function(d) {
+      students = d || []; original.student = students.slice();
+      reloadType('student');
+    });
   }).catch(function(e) { showErr('student-id', e); });
 }
 
@@ -59,7 +103,11 @@ function submitProgram() {
   var p = orig ? go.UpdateProgram(orig, code, name, col) : go.AddProgram(code, name, col);
   p.then(function() {
     toast('Program saved successfully'); closeModal('program');
-    go.ListPrograms().then(function(d) { programs = d || []; filtered.program = programs; original.program = programs.slice(); pages.program = 1; renderTable('program', filtered.program); fillDropdown('f-student-program', programs, 'Code', 'Name'); });
+    go.ListPrograms().then(function(d) {
+      programs = d || []; original.program = programs.slice();
+      reloadType('program');
+      fillDropdown('f-student-program', programs, 'Code', 'Name');
+    });
   }).catch(function(e) { showErr('program-code', e); });
 }
 
@@ -77,7 +125,11 @@ function submitCollege() {
   var p = orig ? go.UpdateCollege(orig, code, name) : go.AddCollege(code, name);
   p.then(function() {
     toast('College saved successfully'); closeModal('college');
-    go.ListColleges().then(function(d) { colleges = d || []; filtered.college = colleges; original.college = colleges.slice(); pages.college = 1; renderTable('college', filtered.college); fillDropdown('f-program-college', colleges, 'Code', 'Name'); });
+    go.ListColleges().then(function(d) {
+      colleges = d || []; original.college = colleges.slice();
+      reloadType('college');
+      fillDropdown('f-program-college', colleges, 'Code', 'Name');
+    });
   }).catch(function(e) { showErr('college-code', e); });
 }
 

@@ -1,4 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=DM+Sans:wght@300;400;500;600&display=swap');
+/* local fonts */
+@font-face { font-family: 'Lora'; src: url('../font/Lora/Lora-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Lora'; src: url('../font/Lora/Lora-500.woff2')   format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Lora'; src: url('../font/Lora/Lora-600.woff2')   format('woff2'); font-weight: 600; font-display: swap; }
+
+@font-face { font-family: 'DM Sans'; src: url('../font/DM-Sans/DM-Sans-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'DM Sans'; src: url('../font/DM-Sans/DM-Sans-300.woff2')     format('woff2'); font-weight: 300; font-display: swap; }
+@font-face { font-family: 'DM Sans'; src: url('../font/DM-Sans/DM-Sans-500.woff2')     format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'DM Sans'; src: url('../font/DM-Sans/DM-Sans-600.woff2')     format('woff2'); font-weight: 600; font-display: swap; }
 
 :root {
   --bg-base:        #f0f4fa;

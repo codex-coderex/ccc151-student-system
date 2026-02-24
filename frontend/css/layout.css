@@ -77,7 +77,22 @@ nav { flex: 1; display: flex; flex-direction: column; gap: 3px; }
 .nav-item:hover { background: var(--bg-hover); color: var(--text-primary); }
 .nav-item.active { background: var(--accent-dim); color: var(--accent); }
 .nav-item.active::before { height: 60%; }
-.nav-icon { font-size: 16px; width: 18px; text-align: center; flex-shrink: 0; }
+.nav-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  background-color: currentColor;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.icon-students { -webkit-mask-image: url('../icons/studentsIcon.svg'); mask-image: url('../icons/studentsIcon.svg'); }
+.icon-programs { -webkit-mask-image: url('../icons/programLogo.svg');  mask-image: url('../icons/programLogo.svg'); }
+.icon-colleges { -webkit-mask-image: url('../icons/collegeIcon.svg');  mask-image: url('../icons/collegeIcon.svg'); }
 
 /* sidebar footer / theme toggle */
 .sidebar-footer { padding-top: 16px; border-top: 1px solid var(--border-subtle); }

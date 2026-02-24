@@ -20,7 +20,7 @@ func main() {
 
 	// launch the Wails window
 	err := wails.Run(&options.App{
-		Title:  "MSU-IIT Student Information System",
+		Title:  "Scholaris - Student System",
 		Width:  1200,
 		Height: 750,
 		AssetServer: &assetserver.Options{
