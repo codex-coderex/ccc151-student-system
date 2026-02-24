@@ -21,7 +21,6 @@ Scholaris uses a Go backend and plain JavaScript frontend, with all data stored 
 - Fast in-memory search and sortable columns across all tables
 - College-based grouping and filtering on the Programs table
 - Paginated tables that adapt to window height
-- Light and dark theme with localStorage persistence
 - Concurrent-safe file access using `sync.RWMutex`
 - Native desktop window via Wails — ships as a single `.exe`
 
@@ -120,6 +119,19 @@ ccc151-student-system/
 - [Wails v2](https://wails.io/docs/gettingstarted/installation)
 - [Node.js](https://nodejs.org/) — required internally by Wails
 
+**Linux only** — Wails requires the following system packages:
+
+```bash
+# Debian/Ubuntu
+sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev
+
+# Fedora
+sudo dnf install gtk3-devel webkit2gtk3-devel
+
+# Arch
+sudo pacman -S gtk3 webkit2gtk
+```
+
 ```bash
 go install github.com/wailsapp/wails/v2/cmd/wails@latest
 ```
@@ -134,14 +146,20 @@ wails dev
 
 ### Production Build
 
+**Windows**
 ```bash
 wails build -o Scholaris
 # output: build/bin/Scholaris.exe
 ```
 
-> **Note:** The executable resolves the `data/` folder relative to its own location. Keep `data/` in the same directory as the binary when distributing.
+**Linux**
+```bash
+wails build -o Scholaris
+# output: build/bin/Scholaris
+chmod +x build/bin/Scholaris
+```
 
----
+> **Note:** The executable resolves the `data/` folder relative to its own location. Keep `data/` in the same directory as the binary when distributing.
 
 ## Package Documentation 📦
 
