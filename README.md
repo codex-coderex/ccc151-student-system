@@ -1,19 +1,28 @@
-# CCC151 Student Information System 🎓
+<p align="center">
+  <img src="assets/logo.png" alt="Scholaris Logo" width="120">
+</p>
+
+# Scholaris — Student Information System 🎓
 
 A lightweight, fully offline desktop app for managing Students, Programs, and Colleges — built with Go and Wails for a native experience without any external database.
 
-CCC151 Student Information System uses a Go backend and plain JavaScript frontend, with all data stored in local CSV files. It supports full CRUD operations across Students, Programs, and Colleges, offering portability and zero-configuration setup.
+Scholaris uses a Go backend and plain JavaScript frontend, with all data stored in local CSV files. It supports full CRUD operations, bulk CSV import/export, cascading integrity checks, and a responsive UI with light/dark mode.
 
 ---
 
 ## Highlights ✅
 
-- Three fully managed directories: Students, Programs, and Colleges
-- Create, read, update, delete, and list flows with validation
+- Three fully managed entities: Students, Programs, and Colleges
+- Full CRUD with field-level validation and duplicate detection
 - Local CSV storage — no database, no setup, fully portable
-- Fast in-memory search across all fields
+- Bulk CSV import with duplicate detection (merge or skip), and export
+- Startup integrity check — orphaned program/college references are auto-cleared
+- Cascading updates — renaming or deleting a college/program propagates to dependents
+- Fast in-memory search and sortable columns across all tables
+- College-based grouping and filtering on the Programs table
+- Paginated tables that adapt to window height
+- Light and dark theme with localStorage persistence
 - Concurrent-safe file access using `sync.RWMutex`
-- Automatic data directory resolution regardless of executable location
 - Native desktop window via Wails — ships as a single `.exe`
 
 ---
@@ -35,10 +44,10 @@ CCC151 Student Information System uses a Go backend and plain JavaScript fronten
 **Students**
 | Field | Type | Description |
 |-------|------|-------------|
-| ID | string | Unique student identifier e.g. `2024-0001` |
+| ID | string | Unique identifier in `YYYY-NNNN` format e.g. `2024-0001` |
 | FirstName | string | Student's first name |
 | LastName | string | Student's last name |
-| ProgramCode | string | References a Program |
+| ProgramCode | string | References a Program (blank = unenrolled) |
 | Year | string | Year level 1–4 |
 | Gender | string | Male / Female |
 
@@ -47,7 +56,7 @@ CCC151 Student Information System uses a Go backend and plain JavaScript fronten
 |-------|------|-------------|
 | Code | string | Unique program code e.g. `BSCS` |
 | Name | string | Full program name |
-| CollegeCode | string | References a College |
+| CollegeCode | string | References a College (blank = unassigned) |
 
 **Colleges**
 | Field | Type | Description |
@@ -64,21 +73,38 @@ ccc151-student-system/
 ├── data/
 │   ├── colleges.csv
 │   ├── programs.csv
-│   └── student.csv
+│   └── students.csv
 ├── frontend/
-│   ├── app.js
-│   ├── index.html
-│   └── style.css
+│   ├── css/
+│   │   ├── variables.css
+│   │   ├── layout.css
+│   │   ├── components.css
+│   │   └── combobox.css
+│   ├── js/
+│   │   ├── state.js           # Shared in-memory state
+│   │   ├── utils.js           # DOM helpers, validation, toast
+│   │   ├── tables.js          # Table rendering, sorting, pagination, filtering
+│   │   ├── combobox.js        # Reusable combobox factory
+│   │   ├── modals.js          # Modal open/close and form handling
+│   │   ├── crud.js            # CRUD submit/delete handlers
+│   │   ├── importexport.js    # CSV import/export UI logic
+│   │   ├── theme.js           # Light/dark theme toggle
+│   │   └── main.js            # Entry point and event wiring
+│   └── index.html
 ├── models/
-│   └── models.go          # Student, Program, College structs
+│   └── models.go              # Student, Program, College structs
 ├── services/
-│   ├── colleges.go        # CRUD logic for colleges
-│   ├── programs.go        # CRUD logic for programs
-│   └── students.go        # CRUD logic for students
+│   ├── cascade.go             # Cascading updates on rename/delete
+│   ├── colleges.go            # CRUD logic for colleges
+│   ├── export.go              # CSV export for all entities
+│   ├── import.go              # CSV import with preview and merge/skip
+│   ├── integrity.go           # Startup orphan cleanup
+│   ├── programs.go            # CRUD logic for programs
+│   └── students.go            # CRUD logic for students
 ├── storage/
-│   └── csv.go             # CSV read/write/append with mutex
-├── app.go                 # Wails bindings — exposes Go methods to JS
-├── main.go                # Entry point and Wails window config
+│   └── csv.go                 # CSV read/write/append with mutex
+├── app.go                     # Wails bindings — exposes Go methods to JS
+├── main.go                    # Entry point and Wails window config
 ├── go.mod
 ├── go.sum
 └── wails.json
@@ -91,7 +117,7 @@ ccc151-student-system/
 ### Prerequisites
 
 - [Go 1.21+](https://go.dev/dl/)
-- [Wails v2](https://wails.io/docs/gettingstarted/installation) (https://wails.io/)
+- [Wails v2](https://wails.io/docs/gettingstarted/installation)
 - [Node.js](https://nodejs.org/) — required internally by Wails
 
 ```bash
@@ -109,11 +135,11 @@ wails dev
 ### Production Build
 
 ```bash
-wails build
-# output: build/bin/student-system.exe
+wails build -o Scholaris
+# output: build/bin/Scholaris.exe
 ```
 
-> **Note:** Move `student-system.exe` out of `build/bin/` and into the project root before running it, so it can locate the `data/` folder correctly.
+> **Note:** The executable resolves the `data/` folder relative to its own location. Keep `data/` in the same directory as the binary when distributing.
 
 ---
 
@@ -123,30 +149,18 @@ wails build
 |---------|---------------|
 | `models` | Defines the `Student`, `Program`, and `College` structs |
 | `storage` | Reads, writes, and appends to CSV files — all calls are mutex-protected |
-| `services` | Business logic — CRUDL operations with duplicate checking and error handling |
+| `services` | Business logic — CRUD, import/export, cascading updates, and startup integrity check |
 | `app.go` | Wails bindings — exposes service functions to the frontend as `window.go.main.App.MethodName()` |
 
-Each entity in `services` follows the same pattern: `List`, `Get`, `Add`, `Update`, `Delete`. The `storage` package handles the actual file I/O and includes a `resolvePath` helper that walks up from the executable to find the `data/` folder automatically.
-
----
-
-## TODO 📋
-
-- [ ] CSV import and export for bulk data entry
-- [ ] User authentication with role-based access — admins manage colleges and programs, regular users manage student records only
-- [ ] Dashboard page with enrollment statistics and graphs by program, college, year level, and gender
-- [ ] Cascading deletes — removing a college or program flags or updates dependent records
-- [ ] Packaged installer for distribution without manual setup
-- [ ] Stricter input validation — ID format, field length limits, duplicate name detection
-- [ ] Audit log to track record changes over time
+Each entity in `services` follows the same pattern: `List`, `Get`, `Add`, `Update`, `Delete`. The `storage` package includes a `resolvePath` helper that locates the `data/` folder relative to the executable in production and falls back to the working directory in `wails dev`.
 
 ---
 
 ## Known Limitations ⚠️
 
 - CSV storage is not suitable for concurrent multi-user access — this is a single-user desktop app
-- Deleting a college or program does not update student or program records that reference it
-- No authentication or access control in the current version
+- No authentication or access control
+- No dashboard or analytics view
 
 ---
 
