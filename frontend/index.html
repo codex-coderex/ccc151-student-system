@@ -48,7 +48,12 @@
           <h1>Students</h1>
           <p>Manage enrolled student records</p>
         </div>
-        <button class="btn btn-primary" id="btn-add-student">+ Add Student</button>
+        <div class="header-actions">
+          <button class="btn btn-ghost" id="btn-import-student">↑ Import</button>
+          <button class="btn btn-ghost" id="btn-export-student">↓ Export</button>
+          <button class="btn btn-primary" id="btn-add-student">+ Add Student</button>
+        </div>
+        <input type="file" id="file-import-student" accept=".csv" style="display:none">
       </div>
       <div class="search-wrap">
         <input type="text" id="student-search" placeholder="Search by name, ID, or program…">
@@ -65,7 +70,12 @@
           <h1>Programs</h1>
           <p>Manage academic programs</p>
         </div>
-        <button class="btn btn-primary" id="btn-add-program">+ Add Program</button>
+        <div class="header-actions">
+          <button class="btn btn-ghost" id="btn-import-program">↑ Import</button>
+          <button class="btn btn-ghost" id="btn-export-program">↓ Export</button>
+          <button class="btn btn-primary" id="btn-add-program">+ Add Program</button>
+        </div>
+        <input type="file" id="file-import-program" accept=".csv" style="display:none">
       </div>
       <div class="search-wrap">
         <input type="text" id="program-search" placeholder="Search by code, name, or college…">
@@ -82,7 +92,12 @@
           <h1>Colleges</h1>
           <p>Manage university colleges</p>
         </div>
-        <button class="btn btn-primary" id="btn-add-college">+ Add College</button>
+        <div class="header-actions">
+          <button class="btn btn-ghost" id="btn-import-college">↑ Import</button>
+          <button class="btn btn-ghost" id="btn-export-college">↓ Export</button>
+          <button class="btn btn-primary" id="btn-add-college">+ Add College</button>
+        </div>
+        <input type="file" id="file-import-college" accept=".csv" style="display:none">
       </div>
       <div class="search-wrap">
         <input type="text" id="college-search" placeholder="Search by code or name…">
@@ -102,11 +117,9 @@
 
       <label>Student ID</label>
       <div class="id-input-wrap">
-        <div class="id-input-wrap">
-            <input type="text" id="f-student-id-year" maxlength="4" placeholder="2026" style="width:80px;">
-            <span class="id-separator">—</span>
-            <input type="text" id="f-student-id-seq" placeholder="0001" maxlength="4">
-          </div>
+        <input type="text" id="f-student-id-year" maxlength="4" placeholder="2026" style="width:80px;">
+        <span class="id-separator">—</span>
+        <input type="text" id="f-student-id-seq" placeholder="0001" maxlength="4">
       </div>
       <span class="error" id="err-student-id"></span>
 
@@ -189,6 +202,7 @@
         <div class="combobox-list" id="program-college-combobox-list"></div>
       </div>
       <input type="hidden" id="f-program-college">
+      <span class="error" id="err-program-college"></span>
 
       <div class="modal-buttons">
         <button class="btn btn-primary" id="btn-submit-program">Save</button>
@@ -231,6 +245,35 @@
     </div>
   </div>
 
+  <!-- import duplicate prompt modal -->
+  <div class="modal" id="modal-import-dupes">
+    <div class="modal-content">
+      <h2>Duplicates Found</h2>
+      <p id="import-dupes-text" style="color:var(--text-secondary);font-size:14px;margin-bottom:12px;"></p>
+      <div id="import-dupes-list" style="max-height:200px;overflow-y:auto;margin-bottom:8px;font-size:13px;color:var(--text-muted);"></div>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:4px;">
+        <strong>Merge</strong> — overwrite existing records with imported data.<br>
+        <strong>Skip</strong> — keep existing records, ignore duplicates.
+      </p>
+      <div class="modal-buttons">
+        <button class="btn btn-primary" id="btn-dupe-merge">Merge</button>
+        <button class="btn btn-ghost" id="btn-dupe-skip">Skip</button>
+        <button class="btn btn-ghost btn-cancel" data-modal="import-dupes">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- import result modal -->
+  <div class="modal" id="modal-import-result">
+    <div class="modal-content">
+      <h2 id="import-result-title">Import Complete</h2>
+      <div id="import-result-body" style="font-size:14px;color:var(--text-secondary);line-height:1.8;"></div>
+      <div class="modal-buttons">
+        <button class="btn btn-primary btn-cancel" data-modal="import-result">OK</button>
+      </div>
+    </div>
+  </div>
+
   <!-- toast -->
   <div id="toast-container"></div>
 
@@ -241,6 +284,7 @@
   <script src="js/modals.js"></script>
   <script src="js/crud.js"></script>
   <script src="js/theme.js"></script>
+  <script src="js/importexport.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

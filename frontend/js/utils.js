@@ -54,7 +54,7 @@ function validateCode(code, field) {
 function validateLabel(name, field, maxLen) {
   if (!name) return field + ' is required';
   if (name.length > (maxLen || 128)) return field + ' must be ' + (maxLen || 128) + ' characters or fewer';
-  if (!/^[a-zA-Z\s\-'.]+$/.test(name)) return field + ' contains invalid characters';
+  if (!/^[a-zA-Z0-9\s\-'.]+$/.test(name)) return field + ' contains invalid characters';
   return null;
 }
 

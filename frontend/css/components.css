@@ -248,3 +248,5 @@ tr.group-header-active td { background: var(--accent-dim); }
 .id-input-wrap select { width: 110px; flex-shrink: 0; }
 .id-input-wrap input { flex: 1; }
 .id-separator { color: var(--text-muted); font-size: 16px; flex-shrink: 0; }
+/* header actions group */
+.header-actions { display: flex; gap: 8px; align-items: center; }

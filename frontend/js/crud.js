@@ -4,12 +4,10 @@ function loadAll() {
   go.ListColleges().then(function(d) {
     colleges = d || []; filtered.college = colleges; original.college = colleges.slice(); pages.college = 1;
     renderTable('college', filtered.college);
-    fillDropdown('f-program-college', colleges, 'Code', 'Name');
   });
   go.ListPrograms().then(function(d) {
     programs = d || []; filtered.program = programs; original.program = programs.slice(); pages.program = 1;
     renderTable('program', filtered.program);
-    fillDropdown('f-student-program', programs, 'Code', 'Name');
   });
   go.ListStudents().then(function(d) {
     students = d || []; filtered.student = students; original.student = students.slice(); pages.student = 1;
@@ -53,7 +51,7 @@ function submitProgram() {
   var valid = runValidations([
     ['program-code', validateCode(code, 'Program code')],
     ['program-name', validateLabel(name, 'Program name')],
-    ['program-code', !col ? 'College is required' : null],
+    ['program-college', !col ? 'College is required' : null],
   ]);
   if (!valid) return;
 

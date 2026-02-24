@@ -4,6 +4,7 @@ window.addEventListener('load', function() {
   initTheme();
   initResize();
   initComboboxes();
+  initImportExport();
 
   // set default student ID year
   setVal('f-student-id-year', new Date().getFullYear());

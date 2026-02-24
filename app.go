@@ -6,8 +6,6 @@ import (
 	"student-system/services"
 )
 
-// App is the main struct that Wails binds to the frontend
-// every public method on App becomes callable from JavaScript
 type App struct {
 	ctx context.Context
 }
@@ -16,14 +14,11 @@ func NewApp() *App {
 	return &App{}
 }
 
-// startup is called when the app launches
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
 // ── COLLEGES ──────────────────────────────────────────
-// these get called from JS like:
-// window.go.main.App.ListColleges()
 
 func (a *App) ListColleges() ([]models.College, error) {
 	return services.ListColleges()
@@ -81,4 +76,44 @@ func (a *App) UpdateStudent(id string, newId string, firstName string, lastName 
 
 func (a *App) DeleteStudent(id string) error {
 	return services.DeleteStudent(id)
+}
+
+// ── EXPORT ──────────────────────────────────────────
+
+func (a *App) ExportColleges() (string, error) {
+	return services.ExportColleges()
+}
+
+func (a *App) ExportPrograms() (string, error) {
+	return services.ExportPrograms()
+}
+
+func (a *App) ExportStudents() (string, error) {
+	return services.ExportStudents()
+}
+
+// ── IMPORT ──────────────────────────────────────────
+
+func (a *App) PreviewImportColleges(csvText string) services.ImportResult {
+	return services.PreviewImportColleges(csvText)
+}
+
+func (a *App) CommitImportColleges(csvText string, merge bool) services.ImportResult {
+	return services.CommitImportColleges(csvText, merge)
+}
+
+func (a *App) PreviewImportPrograms(csvText string) services.ImportResult {
+	return services.PreviewImportPrograms(csvText)
+}
+
+func (a *App) CommitImportPrograms(csvText string, merge bool) services.ImportResult {
+	return services.CommitImportPrograms(csvText, merge)
+}
+
+func (a *App) PreviewImportStudents(csvText string) services.ImportResult {
+	return services.PreviewImportStudents(csvText)
+}
+
+func (a *App) CommitImportStudents(csvText string, merge bool) services.ImportResult {
+	return services.CommitImportStudents(csvText, merge)
 }

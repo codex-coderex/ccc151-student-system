@@ -191,5 +191,5 @@ func DeleteCollege(code string) error {
 		return err
 	}
 
-	return updateStudentProgramCode(code, "")
+	return updateProgramCollegeCode(code, "")
 }
