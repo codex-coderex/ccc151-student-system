@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="Scholaris Logo" width="120">
+  <img src="assets/scholarislogo.png" alt="Scholaris Logo" width="120">
 </p>
 
 # Scholaris — Student Information System 🎓
