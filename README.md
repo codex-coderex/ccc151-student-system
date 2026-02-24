@@ -1,6 +1,8 @@
 <p align="center">
-  <img src="assets/scholarislogo.png" alt="Scholaris Logo" width="120">
+  <img src="assets/scholarisbanner.png" alt="Scholaris Logo" width="120">
 </p>
+
+![Go](https://img.shields.io/badge/go-1.26.0-blue?style=flat&logo=go&logoColor=white) ![Wails](https://img.shields.io/badge/framework-wails-red?style=flat) ![Data](https://img.shields.io/badge/data-CSV-yellow?style=flat) ![Build](https://img.shields.io/badge/build-passing-brightgreen?style=flat)
 
 # Scholaris — Student Information System 🎓
 
