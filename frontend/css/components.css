@@ -48,6 +48,7 @@ td {
 td:first-child { color: var(--text-primary); font-weight: 500; }
 td:last-child { white-space: nowrap; width: 1%; }
 tbody tr:last-child td { border-bottom: none; }
+tbody tr:not(.group-header):nth-child(even) td { background: var(--bg-elevated); }
 tbody tr:hover td { background: var(--bg-hover); }
 
 /* buttons */
@@ -106,7 +107,10 @@ tbody tr:hover td { background: var(--bg-hover); }
   width: 90%; max-width: 480px;
   box-shadow: var(--shadow-lg); animation: slideUp 0.2s ease;
   transition: background var(--transition-slow);
+  box-sizing: border-box;  
 }
+
+#modal-student-info .modal-content { width: max-content; max-width: min(720px, 90vw); }
 
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(12px); }
@@ -271,3 +275,30 @@ tr.group-header-active td { background: var(--accent-dim); }
 
 /* header actions group */
 .header-actions { display: flex; gap: 8px; align-items: center; }
+
+/* student info modal */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+.info-table td {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+.info-table td:first-child {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  padding-right: 16px;
+}
+.info-table td:last-child {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+.info-table tr:last-child td { border-bottom: none; }

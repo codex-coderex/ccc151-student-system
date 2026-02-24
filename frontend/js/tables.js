@@ -129,7 +129,10 @@ function rebuildDropdowns(groupKeys) {
 function renderRows(slice, cols, type, key, label) {
   var html = '';
   slice.forEach(function(row) {
-    html += '<tr>';
+    var rowClick = type === 'student'
+      ? ' onclick="openStudentInfo(\'' + row[key] + '\')" style="cursor:pointer"'
+      : '';
+    html += '<tr' + rowClick + '>';
     cols.forEach(function(c) {
       var v = row[c[0]] || '';
       html += !v && c[0] === 'ProgramCode'

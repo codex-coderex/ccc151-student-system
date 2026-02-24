@@ -55,6 +55,25 @@ function openEdit(type, key) {
   openModal(type);
 }
 
+function openStudentInfo(id) {
+  var s = students.find(function(x) { return x.ID === id; });
+  if (!s) return;
+  var prog = programs.find(function(x) { return x.Code === s.ProgramCode; });
+  var col  = prog ? colleges.find(function(x) { return x.Code === prog.CollegeCode; }) : null;
+
+  el('sinfo-id').textContent        = s.ID;
+  el('sinfo-name').textContent      = s.FirstName + ' ' + s.LastName;
+  el('sinfo-program').textContent   = prog ? prog.Code + ' — ' + prog.Name : 'Unenrolled';
+  el('sinfo-college').textContent   = col  ? col.Code  + ' — ' + col.Name  : '—';
+  el('sinfo-year').textContent      = s.Year;
+  el('sinfo-gender').textContent    = s.Gender;
+
+  el('sinfo-btn-edit').onclick   = function() { closeModal('student-info'); openEdit('student', id); };
+  el('sinfo-btn-delete').onclick = function() { closeModal('student-info'); askDelete('student', id, s.FirstName + ' ' + s.LastName); };
+
+  openModal('student-info');
+}
+
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

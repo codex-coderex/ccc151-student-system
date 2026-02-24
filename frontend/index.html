@@ -276,6 +276,26 @@
       </div>
     </div>
   </div>
+  
+<!-- student info modal --> 
+  <div class="modal" id="modal-student-info">
+    <div class="modal-content">
+      <h2 id="modal-student-info-title">Student Details</h2>
+      <table class="info-table">
+        <tr><td>ID</td><td id="sinfo-id"></td></tr>
+        <tr><td>Name</td><td id="sinfo-name"></td></tr>
+        <tr><td>Program</td><td id="sinfo-program"></td></tr>
+        <tr><td>College</td><td id="sinfo-college"></td></tr>
+        <tr><td>Year Level</td><td id="sinfo-year"></td></tr>
+        <tr><td>Gender</td><td id="sinfo-gender"></td></tr>
+      </table>
+      <div class="modal-buttons">
+        <button id="sinfo-btn-edit" class="btn btn-primary">Edit</button>
+        <button id="sinfo-btn-delete" class="btn btn-danger">Delete</button>
+        <button class="btn btn-ghost btn-cancel" data-modal="student-info">Close</button>
+      </div>
+    </div>
+  </div>
 
   <!-- toast -->
   <div id="toast-container"></div>
